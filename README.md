@@ -4,7 +4,7 @@ This project is an app that allows you to easily download a template from my Git
 
 ## How to download
 
-1. Download this repository using `git clone https://github.com/Louis-Navarro/template-downloader` or by downloading the `.zip` file. Once you've downloaded the repository, open a terminal in the folder.
+1. Download this repository using `git clone https://github.com/Louis-Navarro/template-downloader.git` or by downloading the `.zip` file. Once you've downloaded the repository, open a terminal in the folder.
 
 2. You can now download templates by opening `template-downloader.exe` in `release-builds\template-downloader-win32-ia32`.
 
