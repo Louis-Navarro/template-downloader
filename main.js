@@ -2,6 +2,7 @@ const electron = require('electron');
 const DecompressZip = require('decompress-zip');
 const url = require('url');
 const path = require('path');
+const fs = require('fs');
 
 const { dialog, app, Menu, BrowserWindow, ipcMain } = electron;
 
@@ -64,8 +65,9 @@ app.on('ready', () => {
 		// TODO: Handle error/success
 		webContents.executeJavaScript('document.querySelector("#folderName").value').then((res) => {
 			TARGET_DIR = res || path.join(__dirname, 'test');
+			TARGET_FILENAME = path.join(TARGET_DIR, 'target.zip');
 
-			item.setSavePath(path.join(TARGET_DIR, 'target.zip'));
+			item.setSavePath(TARGET_FILENAME);
 			console.log(item.getSavePath(), res);
 
 			item.on('updated', (event, state) => {
@@ -86,7 +88,7 @@ app.on('ready', () => {
 
 					// Unzip downloaded file
 
-					const unzipper = new DecompressZip(path.join(TARGET_DIR, 'target.zip'));
+					const unzipper = new DecompressZip(TARGET_FILENAME);
 
 					// Define Events
 					unzipper.on('error', function(err) {
@@ -104,6 +106,16 @@ app.on('ready', () => {
 					// Extract File
 					unzipper.extract({
 						path: TARGET_DIR
+					});
+
+					// Delete .zip file
+					fs.unlink(TARGET_FILENAME, (err) => {
+						if (err) {
+							console.log('An error ocurred while removing the file' + err.message);
+							console.log(err);
+							return;
+						}
+						console.log('File successfully removed');
 					});
 				} else {
 					console.log(`Téléchargement échoué : ${state}`);
