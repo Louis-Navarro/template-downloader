@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Template Downloader</title>
+
+    <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="js/FileSaver.min.js"></script>
+    <script type="text/javascript" src="js/jszip.min.js"></script>
+    <script type="text/javascript" src="js/API.js"></script>
+</head>
+
+<body>
+    <h1>Template Downloader</h1>
+    <form>
+        <input type="text" id="folderName" />
+        <button id="selectFolder">Browse</button>
+        <button type="submit" onclick="handleSubmit(this.id);" id="dql_agent">Template 1</button>
+        <button type="submit" onclick="handleSubmit(this.id);" id="sudoku">Template 2</button>
+        <button type="submit" onclick="handleSubmit(this.id);" id="a-star-algortihm">Template 3</button>
+        <button type="submit" onclick="handleSubmit(this.id);" id="dql-package">Template 4</button>
+        <button type="submit" onclick="handleSubmit(this.id);" id="decorators">Template 5</button>
+        <button type="submit" onclick="handleSubmit(this.id);" id="regex-app">Template 6</button>
+        <button type="submit" onclick="handleSubmit(this.id);" id="snake-p5.js">Template 7</button>
+        <button type="submit" onclick="handleSubmit(this.id);" id="snake">Template 8</button>
+        <button type="submit" onclick="handleSubmit(this.id);" id="cartpole-dql">Template 9</button>
+    </form>
+
+    <script type="text/javascript">
+        const electron = require('electron');
+        const { ipcRenderer } = electron;
+
+        document.querySelector('#selectFolder').addEventListener('click', () => {
+            ipcRenderer.send("select:folder");
+        })
+
+        const input = document.querySelector('#folderName');
+        ipcRenderer.on('input:folder', (e, path) => {
+            if (paht !== undefined) {
+                input.value = path;
+            }
+        })
+
+        const form = document.querySelector('form');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+        });
+
+        function handleSubmit(id) {
+            GitZip.zipRepo('https://github.com/Louis-Navarro/dql-package/tree/master/' + id)
+            // GitZip.zipRepo('https://github.com/KinoLien/gitzip/tree/master/js')
+        }
+    </script>
