@@ -22,12 +22,10 @@ It is really easy to use this app. There is only 3 steps.
 
 ## Roadmap
 
-* Add style.
 * Add progess bar.
 * Check if destination folder exists.
 * Add templates.
 * Add comments in `main.js`.
-* Delete the downloaded `.zip` file.
 * Add option to open an editor.
 
 * Create executable for macOS.
