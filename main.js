@@ -7,7 +7,7 @@ const fs = require('fs');
 const { dialog, app, Menu, BrowserWindow, ipcMain } = electron;
 
 // SET ENV
-process.env.NODE_ENV = 'production'; // Comment if in development
+// process.env.NODE_ENV = 'production'; // Comment if in development
 
 let mainWindow;
 
@@ -68,7 +68,6 @@ app.on('ready', () => {
 			TARGET_FILENAME = path.join(TARGET_DIR, 'target.zip');
 
 			item.setSavePath(TARGET_FILENAME);
-			console.log(item.getSavePath(), res);
 
 			item.on('updated', (event, state) => {
 				if (state === 'interrupted') {
@@ -88,6 +87,7 @@ app.on('ready', () => {
 
 					// Unzip downloaded file
 
+					webContents.send('unzipping:start');
 					const unzipper = new DecompressZip(TARGET_FILENAME);
 
 					// Define Events
@@ -97,25 +97,26 @@ app.on('ready', () => {
 					// Notify when everything is extracted
 					unzipper.on('extract', function(log) {
 						console.log('Finished extracting', log);
+
+						// Delete .zip file
+						fs.unlink(TARGET_FILENAME, (err) => {
+							if (err) {
+								console.log('An error ocurred while removing the file' + err.message);
+								console.log(err);
+								return;
+							}
+							console.log('File successfully removed');
+						});
 					});
 					// Notify "progress" of the decompressed files
 					unzipper.on('progress', function(fileIndex, fileCount) {
+						webContents.send('unzipping:progress', fileIndex + 1, fileCount);
 						console.log('Extracted file ' + (fileIndex + 1) + ' of ' + fileCount);
 					});
 
 					// Extract File
 					unzipper.extract({
 						path: TARGET_DIR
-					});
-
-					// Delete .zip file
-					fs.unlink(TARGET_FILENAME, (err) => {
-						if (err) {
-							console.log('An error ocurred while removing the file' + err.message);
-							console.log(err);
-							return;
-						}
-						console.log('File successfully removed');
 					});
 				} else {
 					console.log(`Téléchargement échoué : ${state}`);

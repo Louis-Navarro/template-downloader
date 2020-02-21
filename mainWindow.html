@@ -1,38 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 
 <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <title>Template Downloader</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css'>
+    <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
 
-    <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
-    <script type="text/javascript" src="js/FileSaver.min.js"></script>
-    <script type="text/javascript" src="js/jszip.min.js"></script>
-    <script type="text/javascript" src="js/API.js"></script>
+    <script type='text/javascript' src='js/jquery-1.11.3.min.js'></script>
+    <script type='text/javascript' src='js/FileSaver.min.js'></script>
+    <script type='text/javascript' src='js/jszip.min.js'></script>
+    <script type='text/javascript' src='js/API.js'></script>
 </head>
 
 <body>
     <nav>
-        <div class="nav-wrapper">
-            <a class="brand-logo center">Template Downloader</a>
+        <div class='nav-wrapper'>
+            <a class='brand-logo center'>Template Downloader</a>
         </div>
     </nav>
 
-    <div class="container">
+    <div class='container'>
         <form>
-            <div class="row" style="margin-bottom: 0;">
-                <form class="col s12">
-                    <div class="row">
-                        <div class="input-field col s6" style="width:70%;">
-                            <input type="text" id="folderName" placeholder="Destination Folder"
-                                onkeyup="checkFolder()" />
+            <div class='row' style='margin-bottom: 0;'>
+                <form class='col s12'>
+                    <div class='row'>
+                        <div class='input-field col s6' style='width:70%;'>
+                            <input type='text' id='folderName' placeholder='Destination Folder'
+                                onkeyup='checkFolder()' />
                         </div>
-                        <div class="input-field col s6" style="width:30%;">
-                            <button class="waves-effect waves-light btn" id="selectFolder" style="width:74%;">
-                                <i class="material-icons left">folder_open</i>
+                        <div class='input-field col s6' style='width:30%;'>
+                            <button class='waves-effect waves-light btn' id='selectFolder' style='width:74%;'>
+                                <i class='material-icons left'>folder_open</i>
                                 Browse
                             </button>
                         </div>
@@ -41,48 +41,68 @@
             </div>
 
 
-            <button class="waves-effect waves-light btn" type="submit" onclick="handleSubmit(this.id);"
-                id="python">Python</button>
-            <button class="waves-effect waves-light btn" type="submit" onclick="handleSubmit(this.id);"
-                id="python-ai">Python AI</button>
+            <button class='waves-effect waves-light btn' type='submit' onclick='downloadZip(this.id);'
+                id='python'>Python</button>
+            <button class='waves-effect waves-light btn' type='submit' onclick='downloadZip(this.id);'
+                id='python-ai'>Python AI</button>
         </form>
     </div>
 
-    <script type="text/javascript">
+    <div class='row' id='loadingBar' style='visibility: hidden;'>
+        <div class="col s8 offset-s2">
+            <div class="progress">
+                <div class="indeterminate" id='progressBar'></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type='text/javascript'>
         const electron = require('electron');
         const { ipcRenderer } = electron;
 
         document.querySelector('#selectFolder').addEventListener('click', () => {
-            ipcRenderer.send("select:folder");
-        })
+            ipcRenderer.send('select:folder');
+        });
 
-        const input = document.querySelector('#folderName');
+        const folderName = document.querySelector('#folderName');
         ipcRenderer.on('input:folder', (e, path) => {
             if (path !== undefined) {
-                input.value = path;
-                ipcRenderer.send("check:folder", path);
+                folderName.value = path;
+                ipcRenderer.send('check:folder', path);
             }
-        })
+        });
         function checkFolder() {
-            ipcRenderer.send('check:folder', input.value)
+            ipcRenderer.send('check:folder', folderName.value);
         }
         ipcRenderer.on('check:folder', (e, exists) => {
             if (exists === true) {
-                input.className = 'valid';
+                folderName.className = 'valid';
             } else {
-                input.className = 'invalid'
+                folderName.className = 'invalid';
             }
-        })
+        });
 
         const form = document.querySelector('form');
         form.addEventListener('submit', (e) => {
             e.preventDefault();
         });
 
-        function handleSubmit(id) {
-            GitZip.zipRepo('https://github.com/Louis-Navarro/repository-templates/tree/master/' + id)
-            // GitZip.zipRepo('https://github.com/KinoLien/gitzip/tree/master/js')
+        function downloadZip(id) {
+            const loadingBar = document.querySelector('#loadingBar');
+            loadingBar.style.visibility = 'visible';
+            GitZip.zipRepo('https://github.com/Louis-Navarro/repository-templates/tree/master/' + id);
+            // GitZip.zipRepo('https://github.com/KinoLien/gitzip/tree/master/js');
         }
+        const progressBar = document.querySelector('#progressBar');
+        ipcRenderer.on('unzipping:start', () => {
+            progressBar.className = 'determinate';
+            progressBar.style = 'width: 0%;';
+        });
+        ipcRenderer.on('unzipping:progress', (e, current, total) => {
+            percent = current / total * 100;
+            progressBar.style = 'width: ' + percent + '%;';
+        });
     </script>
 </body>
 
