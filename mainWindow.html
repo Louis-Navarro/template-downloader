@@ -27,7 +27,8 @@
                 <form class="col s12">
                     <div class="row">
                         <div class="input-field col s6" style="width:70%;">
-                            <input type="text" id="folderName" placeholder="Destination Folder" class="validate" />
+                            <input type="text" id="folderName" placeholder="Destination Folder"
+                                onkeyup="checkFolder()" />
                         </div>
                         <div class="input-field col s6" style="width:30%;">
                             <button class="waves-effect waves-light btn" id="selectFolder" style="width:74%;">
@@ -59,6 +60,17 @@
         ipcRenderer.on('input:folder', (e, path) => {
             if (path !== undefined) {
                 input.value = path;
+                ipcRenderer.send("check:folder", path);
+            }
+        })
+        function checkFolder() {
+            ipcRenderer.send('check:folder', input.value)
+        }
+        ipcRenderer.on('check:folder', (e, exists) => {
+            if (exists === true) {
+                input.className = 'valid';
+            } else {
+                input.className = 'invalid'
             }
         })
 
@@ -72,3 +84,6 @@
             // GitZip.zipRepo('https://github.com/KinoLien/gitzip/tree/master/js')
         }
     </script>
+</body>
+
+</html>

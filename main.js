@@ -132,3 +132,8 @@ ipcMain.on('select:folder', async () => {
 	const path = infos.filePaths[0];
 	mainWindow.webContents.send('input:folder', path);
 });
+
+ipcMain.on('check:folder', (e, path) => {
+	exists = fs.existsSync(path) && fs.lstatSync(path).isDirectory();
+	mainWindow.webContents.send('check:folder', exists);
+});
