@@ -22,7 +22,6 @@ It is really easy to use this app. There is only 3 steps.
 
 ## Roadmap
 
-* Add progess bar.
 * Add templates.
 * Add comments in `main.js`.
 * Add option to open an editor.
