@@ -7,7 +7,7 @@ const fs = require('fs');
 const { dialog, app, Menu, BrowserWindow, ipcMain } = electron;
 
 // SET ENV
-process.env.NODE_ENV = 'production'; // Comment if in development
+// process.env.NODE_ENV = 'production'; // Comment if in development
 
 let mainWindow;
 let TARGET_DIR = path.join(__dirname, 'test');

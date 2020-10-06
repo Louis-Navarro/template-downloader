@@ -624,6 +624,7 @@ var _global =
 	fn.urlResolver = _githubUrlChecker;
 
 	_global.GitZip = fn.GitZip = fn;
+	_global._callAjax = _callAjax;
 
 	if (typeof module !== 'undefined') {
 		module.exports = fn;
